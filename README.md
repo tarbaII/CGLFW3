@@ -55,7 +55,7 @@ func main() {
         return
     }
 
-    glfwMakeCurrentContext(window)
+    glfwMakeContextCurrent(window)
     while glfwWindowShouldClose(window) == GLFW_FALSE {
         glfwSwapBuffers(window)
         glfwPollEvents()
