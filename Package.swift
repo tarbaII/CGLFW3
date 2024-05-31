@@ -1,12 +1,6 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.10
 
 import PackageDescription
-
-extension Array where Element == String {
-    func sourcify() -> [String] {
-        return map("src/".appending)
-    }
-}
 
 var cSettings: [CSetting] = [.unsafeFlags(["-fno-objc-arc"])]
 
@@ -82,38 +76,35 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "glfw3",
+            name: "glfw",
             exclude: [
                 "CMake",
                 "deps", "docs", "examples", "tests",
                 "CMakeLists.txt", "LICENSE.md", "README.md",
                 "src/CMakeLists.txt"
             ],
-            sources: sources.sourcify() + ["include"],
+            sources: sources.map("src/".appending) + ["include"],
             publicHeadersPath: "include",
             cSettings: [
                 .headerSearchPath("src"),
                 .headerSearchPath("include"),
-                .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
-                .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
+                // TODO: Find a "safe" way to disable ARC in GLFW's Cocoa backend
+                .unsafeFlags(["-fno-objc-arc"], .when(platforms: [.macOS])),
                 .define("_GLFW_COCOA", .when(platforms: [.macOS])),
-                .define("GLFW_EXPOSE_NATIVE_WIN32", .when(platforms: [.windows])),
-                .define("GLFW_EXPOSE_NATIVE_WGL", .when(platforms: [.windows])),
                 .define("_GLFW_WIN32", .when(platforms: [.windows])),
-                .define("GLFW_EXPOSE_NATIVE_X11", .when(platforms: [.linux])),
                 .define("_GLFW_X11", .when(platforms: [.linux])),
                 .define("_DEFAULT_SOURCE", .when(platforms: [.linux])),
-                .unsafeFlags(["-fno-objc-arc"])
             ],
             linkerSettings: [
                 .linkedFramework("Cocoa", .when(platforms: [.macOS])),
                 .linkedFramework("IOKit", .when(platforms: [.macOS])),
-                .linkedFramework("CoreFoundation", .when(platforms: [.macOS]))
+                .linkedFramework("CoreFoundation", .when(platforms: [.macOS])),
+                .linkedFramework("QuartzCore", .when(platforms: [.macOS])),
             ]
         ),
         .target(
             name: "CGLFW3",
-            dependencies: ["glfw3"]
+            dependencies: ["glfw"]
         ),
         .testTarget(name: "CGLFW3Tests", dependencies: ["CGLFW3"])
     ]
