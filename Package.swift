@@ -2,8 +2,6 @@
 
 import PackageDescription
 
-var cSettings: [CSetting] = [.unsafeFlags(["-fno-objc-arc"])]
-
 var sources: [String] = [
     "internal.h", "platform.h", "mappings.h",
     "context.c", "init.c", "input.c", "monitor.c", "platform.c", "vulkan.c", "window.c",
@@ -23,12 +21,6 @@ sources += [
     "cocoa_joystick.m", "cocoa_monitor.m", "cocoa_window.m",
     "nsgl_context.m"
 ]
-
-cSettings += [
-    .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
-    .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
-    .define("_GLFW_COCOA", .when(platforms: [.macOS]))
-]
 #elseif os(Windows)
 // Win32/WGL
 sources += [
@@ -40,12 +32,6 @@ sources += [
     "win32_platform.h", "win32_joystick.h", "win32_init.c",
     "win32_joystick.c", "win32_monitor.c", "win32_window.c",
     "wgl_context.c"
-]
-
-cSettings += [
-    .define("GLFW_EXPOSE_NATIVE_WIN32", .when(platforms: [.windows])),
-    .define("GLFW_EXPOSE_NATIVE_WGL", .when(platforms: [.windows])),
-    .define("_GLFW_WIN32", .when(platforms: [.windows]))
 ]
 #else
 // Linux/X11
@@ -60,12 +46,6 @@ sources += [
     "x11_platform.h", "xkb_unicode.h", "x11_init.c",
     "x11_monitor.c", "x11_window.c", "xkb_unicode.c",
     "glx_context.c"
-]
-
-cSettings += [
-    .define("GLFW_EXPOSE_NATIVE_X11", .when(platforms: [.linux])),
-    .define("_GLFW_X11", .when(platforms: [.linux])),
-    .define("_DEFAULT_SOURCE", .when(platforms: [.linux]))
 ]
 #endif
 
