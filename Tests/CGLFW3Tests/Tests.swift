@@ -1,5 +1,9 @@
 import XCTest
 @testable import CGLFW3
+#if os(macOS)
+import Cocoa
+import GLKit
+#endif
 
 class Tests: XCTestCase {
 
@@ -46,6 +50,15 @@ class Tests: XCTestCase {
         
         glfwMakeContextCurrent(window)
         XCTAssertEqual(glfwGetError(nil), GLFW_NO_ERROR)
+        
+        #if os(macOS)
+        let cocoaWindow = glfwGetCocoaWindow(window)
+        
+        
+        let context = glfwGetNSGLContext(window) as? NSOpenGLContext
+        XCTAssertNotNil(context)
+        print(context!)
+        #endif
         
         glfwSwapInterval(0)
         
