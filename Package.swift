@@ -56,7 +56,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "glfw",
+            name: "glfw3",
             exclude: [
                 "CMake",
                 "deps", "docs", "examples", "tests",
@@ -86,7 +86,7 @@ let package = Package(
         ),
         .target(
             name: "CGLFW3",
-            dependencies: ["glfw"],
+            dependencies: ["glfw3"],
             cSettings: [
                 .define("_GLFW_COCOA", .when(platforms: [.macOS])),
                 .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
