@@ -49,7 +49,7 @@ sources += [
 ]
 #endif
 
-let sourceMap: [String] = sources.map("src/".appending) + ["include"]
+let sourceMap: [String] = sources.map { "src/\($0)" } + ["include"]
 
 let cSettings: [PackageDescription.CSetting] = [
     .headerSearchPath("src"),
