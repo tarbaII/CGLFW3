@@ -49,53 +49,6 @@ sources += [
 ]
 #endif
 
-let sourceMap: [String] = sources.map { "src/\($0)" } + ["include"]
-
-let cSettings: [PackageDescription.CSetting] = [
-    .headerSearchPath("src"),
-    .headerSearchPath("include"),
-    // TODO: Find a "safe" way to disable ARC in GLFW's Cocoa backend
-    .unsafeFlags(["-fno-objc-arc"], .when(platforms: [.macOS])),
-    .define("_GLFW_COCOA", .when(platforms: [.macOS])),
-    .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
-    .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
-    .define("_GLFW_WIN32", .when(platforms: [.windows])),
-    .define("_GLFW_X11", .when(platforms: [.linux])),
-    .define("_DEFAULT_SOURCE", .when(platforms: [.linux])),
-]
-
-let testTarget: PackageDescription.Target = .testTarget(
-    name: "CGLFW3Tests",
-    dependencies: ["CGLFW3"],
-    cSettings: [
-        .define("GL_SILENCE_DEPRECATION", .when(platforms: [.macOS])),
-        .define("_GLFW_COCOA", .when(platforms: [.macOS])),
-        .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
-        .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
-        .define("_GLFW_WIN32", .when(platforms: [.windows])),
-        .define("_GLFW_X11", .when(platforms: [.linux])),
-    ]
-)
-
-let linkerSettings: [PackageDescription.LinkerSetting] = [
-    .linkedFramework("Cocoa", .when(platforms: [.macOS])),
-    .linkedFramework("IOKit", .when(platforms: [.macOS])),
-    .linkedFramework("CoreFoundation", .when(platforms: [.macOS])),
-    .linkedFramework("QuartzCore", .when(platforms: [.macOS])),
-]
-
-let target: PackageDescription.Target = .target(
-    name: "CGLFW3",
-    dependencies: ["glfw3"],
-    cSettings: [
-        .define("_GLFW_COCOA", .when(platforms: [.macOS])),
-        .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
-        .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
-        .define("_GLFW_WIN32", .when(platforms: [.windows])),
-        .define("_GLFW_X11", .when(platforms: [.linux])),
-    ]
-)
-
 let package = Package(
     name: "CGLFW3",
     products: [
@@ -110,12 +63,49 @@ let package = Package(
                 "CMakeLists.txt", "LICENSE.md", "README.md",
                 "src/CMakeLists.txt"
             ],
-            sources: sourceMap,
+            sources: sources.map { "src/\($0)" } + ["include"],
             publicHeadersPath: "include",
-            cSettings: cSettings,
-            linkerSettings: linkerSettings
+            cSettings: [
+                .headerSearchPath("src"),
+                .headerSearchPath("include"),
+                // TODO: Find a "safe" way to disable ARC in GLFW's Cocoa backend
+                .unsafeFlags(["-fno-objc-arc"], .when(platforms: [.macOS])),
+                .define("_GLFW_COCOA", .when(platforms: [.macOS])),
+                .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
+                .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
+                .define("_GLFW_WIN32", .when(platforms: [.windows])),
+                .define("_GLFW_X11", .when(platforms: [.linux])),
+                .define("_DEFAULT_SOURCE", .when(platforms: [.linux])),
+            ],
+            linkerSettings: [
+                .linkedFramework("Cocoa", .when(platforms: [.macOS])),
+                .linkedFramework("IOKit", .when(platforms: [.macOS])),
+                .linkedFramework("CoreFoundation", .when(platforms: [.macOS])),
+                .linkedFramework("QuartzCore", .when(platforms: [.macOS])),
+            ]
         ),
-        target,
-        testTarget
+        .target(
+            name: "CGLFW3",
+            dependencies: ["glfw3"],
+            cSettings: [
+                .define("_GLFW_COCOA", .when(platforms: [.macOS])),
+                .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
+                .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
+                .define("_GLFW_WIN32", .when(platforms: [.windows])),
+                .define("_GLFW_X11", .when(platforms: [.linux])),
+            ]
+        ),
+        .testTarget(
+            name: "CGLFW3Tests",
+            dependencies: ["CGLFW3"],
+            cSettings: [
+                .define("GL_SILENCE_DEPRECATION", .when(platforms: [.macOS])),
+                .define("_GLFW_COCOA", .when(platforms: [.macOS])),
+                .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
+                .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
+                .define("_GLFW_WIN32", .when(platforms: [.windows])),
+                .define("_GLFW_X11", .when(platforms: [.linux])),
+            ]
+        )
     ]
 )
